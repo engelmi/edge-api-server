@@ -19,7 +19,6 @@ package main
 import (
 	"k8s.io/klog"
 	"sigs.k8s.io/apiserver-runtime/pkg/builder"
-
 	// +kubebuilder:scaffold:resource-imports
 )
 
