@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: edge-api-server
+  namespace: edgeapi
+  labels:
+    apiserver: "true"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      apiserver: "true"
+  template:
+    metadata:
+      labels:
+        apiserver: "true"
+    spec:
+      serviceAccountName: apiserver
+      containers:
+      - name: edge-api-server
+        image: quay.io/rh_ee_mengel/edge-api-server:latest
+        imagePullPolicy: Always
+        args: [ "--etcd-servers=http://localhost:2379" ]
+      - name: etcd
+        image: gcr.io/etcd-development/etcd:v3.5.11
