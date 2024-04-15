@@ -7,10 +7,11 @@ import (
 	"io"
 	"net"
 
-	"github.com/engelmi/edge-api-server/pkg/apis/edge"
 	"github.com/spf13/cobra"
 
+	edgeapi "github.com/engelmi/edge-api-server/pkg/apis/edge"
 	"k8s.io/api/node/v1alpha1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/runtime/schema"
 	utilerrors "k8s.io/apimachinery/pkg/util/errors"
@@ -37,7 +38,7 @@ func NewEdgeServerOptions(out, errOut io.Writer) *EdgeServerOptions {
 	o := &EdgeServerOptions{
 		RecommendedOptions: genericoptions.NewRecommendedOptions(
 			defaultEtcdPathPrefix,
-			Codecs.LegacyCodec(edge.SchemeGroupVersion),
+			Codecs.LegacyCodec(edgeapi.SchemeGroupVersion),
 		),
 
 		StdOut: out,
@@ -106,6 +107,31 @@ func (o *EdgeServerOptions) Config() (*Config, error) {
 	return config, nil
 }
 
+// EdgeServer contains state for a Kubernetes cluster master/api server.
+type EdgeServer struct {
+	GenericAPIServer *genericapiserver.GenericAPIServer
+}
+
+// New returns a new instance of EdgeServer from the given config.
+func NewEdgeServer(c *CompletedConfig) (*EdgeServer, error) {
+	genericServer, err := c.GenericConfig.New("edge-api-server", genericapiserver.NewEmptyDelegate())
+	if err != nil {
+		return nil, err
+	}
+
+	s := &EdgeServer{
+		GenericAPIServer: genericServer,
+	}
+
+	apiGroupInfo := genericapiserver.NewDefaultAPIGroupInfo(edgeapi.GroupName, Scheme, metav1.ParameterCodec, Codecs)
+
+	if err := s.GenericAPIServer.InstallAPIGroup(&apiGroupInfo); err != nil {
+		return nil, err
+	}
+
+	return s, nil
+}
+
 // RunEdgeServer starts a new EdgeServer given EdgeServerOptions
 func (o EdgeServerOptions) RunEdgeServer(stopCh <-chan struct{}) error {
 	config, err := o.Config()
@@ -113,7 +139,7 @@ func (o EdgeServerOptions) RunEdgeServer(stopCh <-chan struct{}) error {
 		return err
 	}
 
-	server, err := config.Complete().New()
+	server, err := NewEdgeServer(config.Complete())
 	if err != nil {
 		return err
 	}

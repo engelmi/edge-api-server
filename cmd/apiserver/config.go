@@ -3,7 +3,6 @@
 package main
 
 import (
-	edgeapi "github.com/engelmi/edge-api-server/pkg/apis/edge"
 	edgeapi_install "github.com/engelmi/edge-api-server/pkg/apis/edge/install"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
@@ -50,11 +49,6 @@ type Config struct {
 	ExtraConfig   ExtraConfig
 }
 
-// EdgeServer contains state for a Kubernetes cluster master/api server.
-type EdgeServer struct {
-	GenericAPIServer *genericapiserver.GenericAPIServer
-}
-
 type completedConfig struct {
 	GenericConfig genericapiserver.CompletedConfig
 	ExtraConfig   *ExtraConfig
@@ -66,7 +60,7 @@ type CompletedConfig struct {
 }
 
 // Complete fills in any fields not set that are required to have valid data. It's mutating the receiver.
-func (cfg *Config) Complete() CompletedConfig {
+func (cfg *Config) Complete() *CompletedConfig {
 	c := completedConfig{
 		cfg.GenericConfig.Complete(),
 		&cfg.ExtraConfig,
@@ -77,25 +71,5 @@ func (cfg *Config) Complete() CompletedConfig {
 		Minor: "0",
 	}
 
-	return CompletedConfig{&c}
-}
-
-// New returns a new instance of EdgeServer from the given config.
-func (c completedConfig) New() (*EdgeServer, error) {
-	genericServer, err := c.GenericConfig.New("edge-api-server", genericapiserver.NewEmptyDelegate())
-	if err != nil {
-		return nil, err
-	}
-
-	s := &EdgeServer{
-		GenericAPIServer: genericServer,
-	}
-
-	apiGroupInfo := genericapiserver.NewDefaultAPIGroupInfo(edgeapi.GroupName, Scheme, metav1.ParameterCodec, Codecs)
-
-	if err := s.GenericAPIServer.InstallAPIGroup(&apiGroupInfo); err != nil {
-		return nil, err
-	}
-
-	return s, nil
+	return &CompletedConfig{&c}
 }
