@@ -4,6 +4,7 @@ package main
 
 import (
 	edgeapi "github.com/engelmi/edge-api-server/pkg/apis/edge"
+	edgeapi_install "github.com/engelmi/edge-api-server/pkg/apis/edge/install"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/runtime/schema"
@@ -21,7 +22,7 @@ var (
 )
 
 func init() {
-	edgeapi.Install(Scheme)
+	edgeapi_install.Install(Scheme)
 
 	// we need to add the options to empty v1
 	// TODO fix the server code to avoid this
