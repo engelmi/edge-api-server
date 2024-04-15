@@ -1,6 +1,8 @@
 
-# Image URL to use all building/pushing image targets
-IMG ?= controller:latest
+# Image URL to use all building image targets
+MANAGER_IMG ?= edge-controller:latest
+APISERVER_IMG ?= edge-api-server:latest
+
 # ENVTEST_K8S_VERSION refers to the version of kubebuilder assets to be downloaded by envtest binary.
 ENVTEST_K8S_VERSION = 1.23
 
@@ -39,14 +41,6 @@ help: ## Display this help.
 
 ##@ Development
 
-.PHONY: manifests
-manifests: controller-gen ## Generate WebhookConfiguration, ClusterRole and CustomResourceDefinition objects.
-	$(CONTROLLER_GEN) rbac:roleName=manager-role crd webhook paths="./..." output:crd:artifacts:config=config/crd/bases
-
-.PHONY: generate
-generate: controller-gen ## Generate code containing DeepCopy, DeepCopyInto, and DeepCopyObject method implementations.
-	$(CONTROLLER_GEN) object:headerFile="hack/boilerplate.go.txt" paths="./..."
-
 .PHONY: fmt
 fmt: ## Run go fmt against code.
 	go fmt ./...
@@ -56,26 +50,32 @@ vet: ## Run go vet against code.
 	go vet ./...
 
 .PHONY: test
-test: manifests generate fmt vet envtest ## Run tests.
+test: fmt vet envtest ## Run tests.
 	KUBEBUILDER_ASSETS="$(shell $(ENVTEST) use $(ENVTEST_K8S_VERSION) -p path)" go test ./... -coverprofile cover.out
 
 ##@ Build
 
-.PHONY: build
-build: generate fmt vet ## Build manager binary.
-	go build -o bin/manager main.go
+.PHONY: build-manager
+build-manager: controller-gen fmt vet ## Build manager binary.
+	go build -o bin/manager cmd/manager/main.go
 
-.PHONY: run
-run: manifests generate fmt vet ## Run a controller from your host.
-	go run ./main.go
+.PHONY: build-apiserver
+build-apiserver: controller-gen fmt vet ## Build manager binary.
+	go build -o bin/edgeserver cmd/apiserver/main.go cmd/apiserver/server.go cmd/apiserver/config.go
 
-.PHONY: docker-build
-docker-build: test ## Build docker image with the manager.
-	docker build -t ${IMG} .
+.PHONY: container-build
+## Build container images with the manager and apiserver.
+container-build: test container-build-manager container-build-apiserver
 
-.PHONY: docker-push
-docker-push: ## Push docker image with the manager.
-	docker push ${IMG}
+
+.PHONY: container-build-manager
+container-build-manager: ## Build container images with the manager.
+	podman build -t ${MANAGER_IMG} -f containers/edge-manager .
+
+.PHONY: container-build-apiserver
+container-build-apiserver: ## Build container images with the apiserver.
+	podman build -t ${MANAGER_IMG} -f containers/edge-manager .
+
 
 ##@ Deployment
 
@@ -100,10 +100,9 @@ deploy: manifests kustomize ## Deploy controller to the K8s cluster specified in
 undeploy: ## Undeploy controller from the K8s cluster specified in ~/.kube/config. Call with ignore-not-found=true to ignore resource not found errors during deletion.
 	$(KUSTOMIZE) build config/default | kubectl delete --ignore-not-found=$(ignore-not-found) -f -
 
-CONTROLLER_GEN = $(GOBIN)/controller-gen
 .PHONY: controller-gen
-controller-gen: ## Download controller-gen locally if necessary.
-	$(call go-get-tool,$(CONTROLLER_GEN),sigs.k8s.io/controller-tools/cmd/controller-gen@v0.8.0)
+controller-gen:
+	@hack/update-codegen.sh
 
 KUSTOMIZE = $(GOBIN)/kustomize
 .PHONY: kustomize
