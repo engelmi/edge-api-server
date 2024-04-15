@@ -11,11 +11,14 @@ import (
 
 	edgeapi "github.com/engelmi/edge-api-server/pkg/apis/edge"
 	edgeapi_v1alpha1 "github.com/engelmi/edge-api-server/pkg/apis/edge/v1alpha1"
+	"github.com/engelmi/edge-api-server/pkg/registry"
+	"github.com/engelmi/edge-api-server/pkg/registry/edge/device"
 
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/runtime/schema"
 	utilerrors "k8s.io/apimachinery/pkg/util/errors"
+	"k8s.io/apiserver/pkg/registry/rest"
 	genericapiserver "k8s.io/apiserver/pkg/server"
 	genericoptions "k8s.io/apiserver/pkg/server/options"
 	utilfeature "k8s.io/apiserver/pkg/util/feature"
@@ -132,6 +135,10 @@ func NewEdgeServer(c *CompletedConfig) (*EdgeServer, error) {
 	}
 
 	apiGroupInfo := genericapiserver.NewDefaultAPIGroupInfo(edgeapi.GroupName, Scheme, metav1.ParameterCodec, Codecs)
+
+	v1alpha1storage := map[string]rest.Storage{}
+	v1alpha1storage["bluechisystems"] = registry.RESTInPeace(device.NewREST(Scheme, c.GenericConfig.RESTOptionsGetter))
+	apiGroupInfo.VersionedResourcesStorageMap["v1alpha1"] = v1alpha1storage
 
 	if err := s.GenericAPIServer.InstallAPIGroup(&apiGroupInfo); err != nil {
 		return nil, err
