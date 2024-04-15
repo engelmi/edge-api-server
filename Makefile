@@ -77,7 +77,7 @@ container-build-manager: ## Build container images with the manager.
 
 .PHONY: container-build-apiserver
 container-build-apiserver: ## Build container images with the apiserver.
-	podman build -t ${MANAGER_IMG} -f containers/edge-manager .
+	podman build -t ${APISERVER_IMG} -f containers/edge-api-server .
 
 
 ##@ Deployment
