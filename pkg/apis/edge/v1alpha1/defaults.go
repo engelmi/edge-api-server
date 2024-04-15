@@ -10,7 +10,7 @@ func addDefaultingFuncs(scheme *runtime.Scheme) error {
 	return RegisterDefaults(scheme)
 }
 
-// SetDefaults_BlueChiSystemSpec sets defaults for BlueChiSystem spec
-func SetDefaults_BlueChiSystemSpec(obj *EdgeDeviceSpec) {
+// SetDefaults_EdgeDeviceSpec sets defaults for EdgeDevice spec
+func SetDefaults_EdgeDeviceSpec(obj *EdgeDeviceSpec) {
 
 }

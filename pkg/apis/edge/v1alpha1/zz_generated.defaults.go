@@ -15,5 +15,18 @@ import (
 // Public to allow building arbitrary schemes.
 // All generated defaulters are covering - they call all nested defaulters.
 func RegisterDefaults(scheme *runtime.Scheme) error {
+	scheme.AddTypeDefaultingFunc(&EdgeDevice{}, func(obj interface{}) { SetObjectDefaults_EdgeDevice(obj.(*EdgeDevice)) })
+	scheme.AddTypeDefaultingFunc(&EdgeDeviceList{}, func(obj interface{}) { SetObjectDefaults_EdgeDeviceList(obj.(*EdgeDeviceList)) })
 	return nil
+}
+
+func SetObjectDefaults_EdgeDevice(in *EdgeDevice) {
+	SetDefaults_EdgeDeviceSpec(&in.Spec)
+}
+
+func SetObjectDefaults_EdgeDeviceList(in *EdgeDeviceList) {
+	for i := range in.Items {
+		a := &in.Items[i]
+		SetObjectDefaults_EdgeDevice(a)
+	}
 }
