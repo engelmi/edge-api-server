@@ -137,7 +137,7 @@ func NewEdgeServer(c *CompletedConfig) (*EdgeServer, error) {
 	apiGroupInfo := genericapiserver.NewDefaultAPIGroupInfo(edgeapi.GroupName, Scheme, metav1.ParameterCodec, Codecs)
 
 	v1alpha1storage := map[string]rest.Storage{}
-	v1alpha1storage["bluechisystems"] = registry.RESTInPeace(device.NewREST(Scheme, c.GenericConfig.RESTOptionsGetter))
+	v1alpha1storage["edgedevices"] = registry.RESTInPeace(device.NewREST(Scheme, c.GenericConfig.RESTOptionsGetter))
 	apiGroupInfo.VersionedResourcesStorageMap["v1alpha1"] = v1alpha1storage
 
 	if err := s.GenericAPIServer.InstallAPIGroup(&apiGroupInfo); err != nil {

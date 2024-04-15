@@ -1,5 +1,5 @@
-
 # Image URL to use all building image targets
+IMGREGISTRY ?= quay.io/rh_ee_mengel
 MANAGER_IMG ?= edge-controller:latest
 APISERVER_IMG ?= edge-api-server:latest
 
@@ -53,31 +53,35 @@ vet: ## Run go vet against code.
 test: fmt vet envtest ## Run tests.
 	KUBEBUILDER_ASSETS="$(shell $(ENVTEST) use $(ENVTEST_K8S_VERSION) -p path)" go test ./... -coverprofile cover.out
 
+.PHONY: manifests
+manifests: ## Generate WebhookConfiguration, ClusterRole and CustomResourceDefinition objects.
+	controller-gen rbac:roleName=manager-role crd webhook paths="./..." output:crd:artifacts:config=config/crd/bases
+
 ##@ Build
 
 .PHONY: build
 build: build-manager build-apiserver
 
 .PHONY: build-manager
-build-manager: controller-gen fmt vet ## Build manager binary.
+build-manager: fmt vet ## Build manager binary.
 	go build -o bin/manager cmd/manager/main.go
 
 .PHONY: build-apiserver
-build-apiserver: controller-gen fmt vet ## Build manager binary.
+build-apiserver: fmt vet ## Build manager binary.
 	go build -o bin/edgeserver cmd/apiserver/main.go cmd/apiserver/server.go cmd/apiserver/config.go
 
 .PHONY: container-build
 ## Build container images with the manager and apiserver.
-container-build: test container-build-manager container-build-apiserver
+container-build: container-build-manager container-build-apiserver
 
 
 .PHONY: container-build-manager
 container-build-manager: ## Build container images with the manager.
-	podman build -t ${MANAGER_IMG} -f containers/edge-manager .
+	podman build -t ${IMGREGISTRY}/${MANAGER_IMG} -f containers/edge-manager .
 
 .PHONY: container-build-apiserver
 container-build-apiserver: ## Build container images with the apiserver.
-	podman build -t ${APISERVER_IMG} -f containers/edge-api-server .
+	podman build -t ${IMGREGISTRY}/${APISERVER_IMG} -f containers/edge-api-server .
 
 
 ##@ Deployment
