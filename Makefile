@@ -55,6 +55,9 @@ test: fmt vet envtest ## Run tests.
 
 ##@ Build
 
+.PHONY: build
+build: build-manager build-apiserver
+
 .PHONY: build-manager
 build-manager: controller-gen fmt vet ## Build manager binary.
 	go build -o bin/manager cmd/manager/main.go
