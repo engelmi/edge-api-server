@@ -9,18 +9,13 @@ CODEGEN_PKG=${CODEGEN_PKG:-$(cd "${SCRIPT_ROOT}"; ls -d -1 ./vendor/k8s.io/code-
 
 source "${CODEGEN_PKG}/kube_codegen.sh"
 
-# generate the code with:
-# --output-base    because this script should also be able to run inside the vendor dir of
-#                  k8s.io/kubernetes. The output-base is needed for the generators to output into the vendor dir
-#                  instead of the $GOPATH directly. For normal projects this can be dropped.
-
 kube::codegen::gen_helpers \
     --input-pkg-root github.com/engelmi/edge-api-server/pkg/apis \
     --output-base "$(dirname "${BASH_SOURCE[0]}")/../../../.." \
     --boilerplate "${SCRIPT_ROOT}/hack/boilerplate.go.txt"
 
 if [[ -n "${API_KNOWN_VIOLATIONS_DIR:-}" ]]; then
-    report_filename="${API_KNOWN_VIOLATIONS_DIR}/bluechi_server_violation_exceptions.list"
+    report_filename="${API_KNOWN_VIOLATIONS_DIR}/known-openapi-violations.list"
     if [[ "${UPDATE_API_KNOWN_VIOLATIONS:-}" == "true" ]]; then
         update_report="--update-report"
     fi
