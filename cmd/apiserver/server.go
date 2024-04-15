@@ -10,7 +10,8 @@ import (
 	"github.com/spf13/cobra"
 
 	edgeapi "github.com/engelmi/edge-api-server/pkg/apis/edge"
-	"k8s.io/api/node/v1alpha1"
+	edgeapi_v1alpha1 "github.com/engelmi/edge-api-server/pkg/apis/edge/v1alpha1"
+
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/runtime/schema"
@@ -38,13 +39,16 @@ func NewEdgeServerOptions(out, errOut io.Writer) *EdgeServerOptions {
 	o := &EdgeServerOptions{
 		RecommendedOptions: genericoptions.NewRecommendedOptions(
 			defaultEtcdPathPrefix,
-			Codecs.LegacyCodec(edgeapi.SchemeGroupVersion),
+			Codecs.LegacyCodec(edgeapi_v1alpha1.SchemeGroupVersion),
 		),
 
 		StdOut: out,
 		StdErr: errOut,
 	}
-	o.RecommendedOptions.Etcd.StorageConfig.EncodeVersioner = runtime.NewMultiGroupVersioner(v1alpha1.SchemeGroupVersion, schema.GroupKind{Group: v1alpha1.GroupName})
+	o.RecommendedOptions.Etcd.StorageConfig.EncodeVersioner = runtime.NewMultiGroupVersioner(
+		edgeapi_v1alpha1.SchemeGroupVersion,
+		schema.GroupKind{Group: edgeapi_v1alpha1.GroupName},
+	)
 	return o
 }
 
@@ -91,7 +95,11 @@ func (o *EdgeServerOptions) Complete() error {
 // Config returns config for the api server given EdgeServerOptions
 func (o *EdgeServerOptions) Config() (*Config, error) {
 	// TODO: have a "real" external address
-	if err := o.RecommendedOptions.SecureServing.MaybeDefaultWithSelfSignedCerts("localhost", o.AlternateDNS, []net.IP{netutils.ParseIPSloppy("127.0.0.1")}); err != nil {
+	if err := o.RecommendedOptions.SecureServing.MaybeDefaultWithSelfSignedCerts(
+		"localhost",
+		o.AlternateDNS,
+		[]net.IP{netutils.ParseIPSloppy("127.0.0.1")},
+	); err != nil {
 		return nil, fmt.Errorf("error creating self-signed certificates: %v", err)
 	}
 
