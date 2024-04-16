@@ -20,8 +20,9 @@ func NewREST(scheme *runtime.Scheme, optsGetter generic.RESTOptionsGetter) (*reg
 		NewFunc:     func() runtime.Object { return &edge.EdgeDevice{} },
 		NewListFunc: func() runtime.Object { return &edge.EdgeDeviceList{} },
 
-		PredicateFunc:            MatchEdgeDevice,
-		DefaultQualifiedResource: edge.Resource("edgedevices"),
+		PredicateFunc:             MatchEdgeDevice,
+		DefaultQualifiedResource:  edge.Resource("edgedevices"),
+		SingularQualifiedResource: edge.Resource("edgedevice"),
 
 		CreateStrategy: strategy,
 		UpdateStrategy: strategy,
