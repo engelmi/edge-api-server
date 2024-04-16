@@ -1,0 +1,17 @@
+apiVersion: org.redhat.edgeapi/v1alpha1
+kind: EdgeDevice
+metadata:
+  name: car-1234567
+  namespace: edgeapi
+status: up
+spec:
+  nodes:
+    - name: control-node
+      status: online
+      lastSeenTimestamp: now
+    - name: worker-node-1
+      status: online
+      lastSeenTimestamp: now
+    - name: worker-node-2
+      status: online
+      lastSeenTimestamp: now

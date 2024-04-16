@@ -1,12 +1,12 @@
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: edgeapi-server-clusterrolebinding
+  name: edgeapi-controller-clusterrolebinding
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: aggregated-edgeapiserver-clusterrole
+  name: aggregated-edgecontroller-clusterrole
 subjects:
 - kind: ServiceAccount
-  name: edgeapiserver
+  name: edgeapicontroller
   namespace: edgeapi

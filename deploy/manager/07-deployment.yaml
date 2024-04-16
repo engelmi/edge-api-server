@@ -1,0 +1,31 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: edge-controller
+  namespace: edgeapi
+  labels:
+    controller: "true"
+spec:
+  selector:
+    matchLabels:
+      controller: "true"
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        controller: "true"
+    spec:
+      serviceAccountName: edgeapicontroller
+      containers:
+      - name: edge-manager
+        image: quay.io/rh_ee_mengel/edge-manager:latest
+        imagePullPolicy: Always
+        args:
+        resources:
+          requests:
+            cpu: 100m
+            memory: 200Mi
+          limits:
+            cpu: 100m
+            memory: 300Mi

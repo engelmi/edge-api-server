@@ -15,7 +15,7 @@ spec:
       labels:
         apiserver: "true"
     spec:
-      serviceAccountName: apiserver
+      serviceAccountName: edgeapiserver
       containers:
       - name: edge-api-server
         image: quay.io/rh_ee_mengel/edge-api-server:latest
