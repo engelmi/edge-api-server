@@ -11,6 +11,7 @@ import (
 
 	edgeapi "github.com/engelmi/edge-api-server/pkg/apis/edge"
 	edgeapi_v1alpha1 "github.com/engelmi/edge-api-server/pkg/apis/edge/v1alpha1"
+	edge_openapi "github.com/engelmi/edge-api-server/pkg/generated/openapi"
 	"github.com/engelmi/edge-api-server/pkg/registry"
 	"github.com/engelmi/edge-api-server/pkg/registry/edge/device"
 
@@ -18,6 +19,7 @@ import (
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/runtime/schema"
 	utilerrors "k8s.io/apimachinery/pkg/util/errors"
+	"k8s.io/apiserver/pkg/endpoints/openapi"
 	"k8s.io/apiserver/pkg/registry/rest"
 	genericapiserver "k8s.io/apiserver/pkg/server"
 	genericoptions "k8s.io/apiserver/pkg/server/options"
@@ -110,6 +112,20 @@ func (o *EdgeServerOptions) Config() (*Config, error) {
 	if err := o.RecommendedOptions.ApplyTo(serverConfig); err != nil {
 		return nil, err
 	}
+
+	serverConfig.OpenAPIConfig = genericapiserver.DefaultOpenAPIConfig(
+		edge_openapi.GetOpenAPIDefinitions,
+		openapi.NewDefinitionNamer(Scheme),
+	)
+	serverConfig.OpenAPIConfig.Info.Title = "EdgeAPI"
+	serverConfig.OpenAPIConfig.Info.Version = "0.1"
+
+	serverConfig.OpenAPIV3Config = genericapiserver.DefaultOpenAPIV3Config(
+		edge_openapi.GetOpenAPIDefinitions,
+		openapi.NewDefinitionNamer(Scheme),
+	)
+	serverConfig.OpenAPIV3Config.Info.Title = "EdgeAPI"
+	serverConfig.OpenAPIV3Config.Info.Version = "0.1"
 
 	config := &Config{
 		GenericConfig: serverConfig,
