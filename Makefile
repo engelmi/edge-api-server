@@ -1,6 +1,6 @@
 # Image URL to use all building image targets
 IMGREGISTRY ?= quay.io/rh_ee_mengel
-MANAGER_IMG ?= edge-controller:latest
+MANAGER_IMG ?= edge-manager:latest
 APISERVER_IMG ?= edge-api-server:latest
 
 # ENVTEST_K8S_VERSION refers to the version of kubebuilder assets to be downloaded by envtest binary.

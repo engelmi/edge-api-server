@@ -6,6 +6,7 @@ import (
 	"flag"
 	"os"
 
+	edgeapi_v1alpha1 "github.com/engelmi/edge-api-server/pkg/apis/edge/v1alpha1"
 	edgecontrollers "github.com/engelmi/edge-api-server/pkg/controllers/edge"
 
 	// Import all Kubernetes client auth plugins (e.g. Azure, GCP, OIDC, etc.)
@@ -28,6 +29,7 @@ var (
 
 func init() {
 	utilruntime.Must(clientgoscheme.AddToScheme(scheme))
+	utilruntime.Must(edgeapi_v1alpha1.AddToScheme(scheme))
 }
 
 func main() {
