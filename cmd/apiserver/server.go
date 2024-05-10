@@ -11,6 +11,8 @@ import (
 
 	edgeapi "github.com/engelmi/edge-api-server/pkg/apis/edge"
 	edgeapi_v1alpha1 "github.com/engelmi/edge-api-server/pkg/apis/edge/v1alpha1"
+	"github.com/engelmi/edge-api-server/pkg/bridges"
+	"github.com/engelmi/edge-api-server/pkg/generated/clientset/versioned/typed/edge/v1alpha1"
 	edge_openapi "github.com/engelmi/edge-api-server/pkg/generated/openapi"
 	"github.com/engelmi/edge-api-server/pkg/registry"
 	"github.com/engelmi/edge-api-server/pkg/registry/edge/device"
@@ -24,6 +26,9 @@ import (
 	genericapiserver "k8s.io/apiserver/pkg/server"
 	genericoptions "k8s.io/apiserver/pkg/server/options"
 	utilfeature "k8s.io/apiserver/pkg/util/feature"
+	k8srest "k8s.io/client-go/rest"
+	k8sclientcmd "k8s.io/client-go/tools/clientcmd"
+	"k8s.io/klog/v2"
 	netutils "k8s.io/utils/net"
 )
 
@@ -54,6 +59,7 @@ func NewEdgeServerOptions(out, errOut io.Writer) *EdgeServerOptions {
 		edgeapi_v1alpha1.SchemeGroupVersion,
 		schema.GroupKind{Group: edgeapi_v1alpha1.GroupName},
 	)
+
 	return o
 }
 
@@ -71,6 +77,26 @@ func NewCommandStartEdgeServer(defaults *EdgeServerOptions, stopCh <-chan struct
 			if err := o.Validate(args); err != nil {
 				return err
 			}
+
+			config, err := k8sclientcmd.BuildConfigFromFlags("", "")
+			if err != nil {
+				klog.Errorf("Failed to create k8s config: %s", err)
+			}
+			mqttBridge := bridges.NewMQTTBridge(
+				c.Context(),
+				"edgeapi",
+				bridges.NewMQTTClient(
+					"mosquitto-mqtts.edgeapi-mqtt.svc.cluster.local",
+					8883,
+					"someuser",
+					"topsecret",
+				),
+				v1alpha1.NewForConfigOrDie(
+					k8srest.AddUserAgent(config, ""),
+				),
+			)
+			go mqttBridge.Run(stopCh)
+
 			if err := o.RunEdgeServer(stopCh); err != nil {
 				return err
 			}
