@@ -12,6 +12,12 @@ const (
 	EdgeDeviceStatusDown     = EdgeDeviceStatus("down")
 )
 
+type Workload struct {
+	Name     string `json:"name,omitempty"`
+	State    string `json:"state,omitempty"`
+	SubState string `json:"substate,omitempty"`
+}
+
 type EdgeNodeStatus string
 
 const (
@@ -23,6 +29,8 @@ type EdgeNode struct {
 	Name              string         `json:"name,omitempty"`
 	Status            EdgeNodeStatus `json:"status,omitempty"`
 	LastSeenTimestamp string         `json:"lastSeenTimestamp,omitempty"`
+
+	Workloads []Workload `json:"workloads,omitempty"`
 }
 
 type EdgeNodes []EdgeNode

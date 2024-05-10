@@ -21,6 +21,7 @@ func GetOpenAPIDefinitions(ref common.ReferenceCallback) map[string]common.OpenA
 		"github.com/engelmi/edge-api-server/pkg/apis/edge/v1alpha1.EdgeDeviceList": schema_pkg_apis_edge_v1alpha1_EdgeDeviceList(ref),
 		"github.com/engelmi/edge-api-server/pkg/apis/edge/v1alpha1.EdgeDeviceSpec": schema_pkg_apis_edge_v1alpha1_EdgeDeviceSpec(ref),
 		"github.com/engelmi/edge-api-server/pkg/apis/edge/v1alpha1.EdgeNode":       schema_pkg_apis_edge_v1alpha1_EdgeNode(ref),
+		"github.com/engelmi/edge-api-server/pkg/apis/edge/v1alpha1.Workload":       schema_pkg_apis_edge_v1alpha1_Workload(ref),
 		"k8s.io/apimachinery/pkg/apis/meta/v1.APIGroup":                            schema_pkg_apis_meta_v1_APIGroup(ref),
 		"k8s.io/apimachinery/pkg/apis/meta/v1.APIGroupList":                        schema_pkg_apis_meta_v1_APIGroupList(ref),
 		"k8s.io/apimachinery/pkg/apis/meta/v1.APIResource":                         schema_pkg_apis_meta_v1_APIResource(ref),
@@ -216,6 +217,51 @@ func schema_pkg_apis_edge_v1alpha1_EdgeNode(ref common.ReferenceCallback) common
 						},
 					},
 					"lastSeenTimestamp": {
+						SchemaProps: spec.SchemaProps{
+							Type:   []string{"string"},
+							Format: "",
+						},
+					},
+					"workloads": {
+						SchemaProps: spec.SchemaProps{
+							Type: []string{"array"},
+							Items: &spec.SchemaOrArray{
+								Schema: &spec.Schema{
+									SchemaProps: spec.SchemaProps{
+										Default: map[string]interface{}{},
+										Ref:     ref("github.com/engelmi/edge-api-server/pkg/apis/edge/v1alpha1.Workload"),
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+		},
+		Dependencies: []string{
+			"github.com/engelmi/edge-api-server/pkg/apis/edge/v1alpha1.Workload"},
+	}
+}
+
+func schema_pkg_apis_edge_v1alpha1_Workload(ref common.ReferenceCallback) common.OpenAPIDefinition {
+	return common.OpenAPIDefinition{
+		Schema: spec.Schema{
+			SchemaProps: spec.SchemaProps{
+				Type: []string{"object"},
+				Properties: map[string]spec.Schema{
+					"name": {
+						SchemaProps: spec.SchemaProps{
+							Type:   []string{"string"},
+							Format: "",
+						},
+					},
+					"state": {
+						SchemaProps: spec.SchemaProps{
+							Type:   []string{"string"},
+							Format: "",
+						},
+					},
+					"substate": {
 						SchemaProps: spec.SchemaProps{
 							Type:   []string{"string"},
 							Format: "",

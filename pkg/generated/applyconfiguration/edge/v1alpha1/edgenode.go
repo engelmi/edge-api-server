@@ -11,9 +11,10 @@ import (
 // EdgeNodeApplyConfiguration represents an declarative configuration of the EdgeNode type for use
 // with apply.
 type EdgeNodeApplyConfiguration struct {
-	Name              *string                  `json:"name,omitempty"`
-	Status            *v1alpha1.EdgeNodeStatus `json:"status,omitempty"`
-	LastSeenTimestamp *string                  `json:"lastSeenTimestamp,omitempty"`
+	Name              *string                      `json:"name,omitempty"`
+	Status            *v1alpha1.EdgeNodeStatus     `json:"status,omitempty"`
+	LastSeenTimestamp *string                      `json:"lastSeenTimestamp,omitempty"`
+	Workloads         []WorkloadApplyConfiguration `json:"workloads,omitempty"`
 }
 
 // EdgeNodeApplyConfiguration constructs an declarative configuration of the EdgeNode type for use with
@@ -43,5 +44,18 @@ func (b *EdgeNodeApplyConfiguration) WithStatus(value v1alpha1.EdgeNodeStatus) *
 // If called multiple times, the LastSeenTimestamp field is set to the value of the last call.
 func (b *EdgeNodeApplyConfiguration) WithLastSeenTimestamp(value string) *EdgeNodeApplyConfiguration {
 	b.LastSeenTimestamp = &value
+	return b
+}
+
+// WithWorkloads adds the given value to the Workloads field in the declarative configuration
+// and returns the receiver, so that objects can be build by chaining "With" function invocations.
+// If called multiple times, values provided by each call will be appended to the Workloads field.
+func (b *EdgeNodeApplyConfiguration) WithWorkloads(values ...*WorkloadApplyConfiguration) *EdgeNodeApplyConfiguration {
+	for i := range values {
+		if values[i] == nil {
+			panic("nil value passed to WithWorkloads")
+		}
+		b.Workloads = append(b.Workloads, *values[i])
+	}
 	return b
 }

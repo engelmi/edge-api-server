@@ -21,6 +21,8 @@ func ForKind(kind schema.GroupVersionKind) interface{} {
 		return &edgev1alpha1.EdgeDeviceSpecApplyConfiguration{}
 	case v1alpha1.SchemeGroupVersion.WithKind("EdgeNode"):
 		return &edgev1alpha1.EdgeNodeApplyConfiguration{}
+	case v1alpha1.SchemeGroupVersion.WithKind("Workload"):
+		return &edgev1alpha1.WorkloadApplyConfiguration{}
 
 	}
 	return nil

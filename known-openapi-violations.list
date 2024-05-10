@@ -1,3 +1,4 @@
+API rule violation: list_type_missing,github.com/engelmi/edge-api-server/pkg/apis/edge/v1alpha1,EdgeNode,Workloads
 API rule violation: list_type_missing,k8s.io/apimachinery/pkg/apis/meta/v1,APIGroup,ServerAddressByClientCIDRs
 API rule violation: list_type_missing,k8s.io/apimachinery/pkg/apis/meta/v1,APIGroup,Versions
 API rule violation: list_type_missing,k8s.io/apimachinery/pkg/apis/meta/v1,APIGroupList,Groups
@@ -22,6 +23,7 @@ API rule violation: list_type_missing,k8s.io/apimachinery/pkg/apis/meta/v1,Table
 API rule violation: list_type_missing,k8s.io/apimachinery/pkg/apis/meta/v1,TableRow,Cells
 API rule violation: list_type_missing,k8s.io/apimachinery/pkg/apis/meta/v1,TableRow,Conditions
 API rule violation: list_type_missing,k8s.io/apimachinery/pkg/apis/meta/v1,UpdateOptions,DryRun
+API rule violation: names_match,github.com/engelmi/edge-api-server/pkg/apis/edge/v1alpha1,Workload,SubState
 API rule violation: names_match,k8s.io/apimachinery/pkg/apis/meta/v1,APIResourceList,APIResources
 API rule violation: names_match,k8s.io/apimachinery/pkg/apis/meta/v1,Duration,Duration
 API rule violation: names_match,k8s.io/apimachinery/pkg/apis/meta/v1,InternalEvent,Object
