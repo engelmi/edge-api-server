@@ -1,5 +1,5 @@
 # Image URL to use all building image targets
-IMGREGISTRY ?= quay.io/rh_ee_mengel
+IMGREGISTRY ?= localhost
 MANAGER_IMG ?= edge-manager:latest
 APISERVER_IMG ?= edge-api-server:latest
 
@@ -82,6 +82,29 @@ container-build-manager: ## Build container images with the manager.
 .PHONY: container-build-apiserver
 container-build-apiserver: ## Build container images with the apiserver.
 	podman build -t ${IMGREGISTRY}/${APISERVER_IMG} -f containers/edge-api-server .
+
+.PHONY: container-quick-build
+minikube-deploy:
+	mkdir -p bin
+	rm -f bin/*
+	go build -o bin/edge-server \
+		cmd/apiserver/main.go \
+		cmd/apiserver/server.go \
+		cmd/apiserver/config.go 
+	
+	go build -o bin/edge-controller \
+		cmd/manager/main.go
+	
+	podman build --build-arg binary=edge-server \
+		-t ${IMGREGISTRY}/${APISERVER_IMG} -f containers/template .
+	podman build --build-arg binary=edge-controller \
+		-t ${IMGREGISTRY}/${MANAGER_IMG} -f containers/template .
+
+	podman save ${IMGREGISTRY}/${APISERVER_IMG} > bin/edge-api-server.tar
+	podman save ${IMGREGISTRY}/${MANAGER_IMG} > bin/edge-manager.tar
+
+	minikube image load bin/edge-api-server.tar
+	minikube image load bin/edge-manager.tar
 
 
 ##@ Deployment

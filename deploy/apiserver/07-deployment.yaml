@@ -18,8 +18,11 @@ spec:
       serviceAccountName: edgeapiserver
       containers:
       - name: edge-api-server
-        image: quay.io/rh_ee_mengel/edge-api-server:latest
-        imagePullPolicy: Always
-        args: [ "--etcd-servers=http://localhost:2379" ]
+        image: docker.io/localhost/edge-api-server:latest
+        imagePullPolicy: Never
+        args: [ 
+          "--etcd-servers=http://localhost:2379",
+          "--cert-dir=/tmp",
+          ]
       - name: etcd
         image: gcr.io/etcd-development/etcd:v3.5.11

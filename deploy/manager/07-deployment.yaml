@@ -19,8 +19,8 @@ spec:
       serviceAccountName: edgeapicontroller
       containers:
       - name: edge-manager
-        image: quay.io/rh_ee_mengel/edge-manager:latest
-        imagePullPolicy: Always
+        image: docker.io/localhost/edge-manager:latest
+        imagePullPolicy: Never
         args:
         resources:
           requests:

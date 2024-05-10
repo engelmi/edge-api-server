@@ -1,0 +1,9 @@
+FROM fedora
+
+ARG binary
+
+WORKDIR /
+
+COPY bin/$binary ./binary
+
+ENTRYPOINT ["/binary"]
