@@ -1,0 +1,19 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: mosquitto
+  namespace: edgeapi-mqtt
+  annotations:
+    spec.ingressClassName: "nginx"
+spec:
+  rules:
+  - host: mqtt.example.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: mosquitto-mqtts
+            port: 
+              number: 8883
