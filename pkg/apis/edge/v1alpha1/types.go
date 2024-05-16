@@ -36,6 +36,8 @@ type EdgeNode struct {
 type EdgeNodes []EdgeNode
 
 type EdgeDeviceSpec struct {
+	ID    string    `json:"id,omitempty"`
+	Type  string    `json:"type,omitempty"`
 	Nodes EdgeNodes `json:"nodes,omitempty"`
 }
 

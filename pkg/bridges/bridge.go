@@ -89,8 +89,13 @@ func (bridge *MQTTBridge) handleEdgeDeviceRegister(client mqtt.Client, msg mqtt.
 			Name:              req.DeviceID,
 			Namespace:         bridge.namespace,
 			CreationTimestamp: v1.Now(),
+			Labels: map[string]string{
+				"DeviceType": req.DeviceType,
+			},
 		},
 		Spec: v1alpha1.EdgeDeviceSpec{
+			ID:    req.DeviceID,
+			Type:  req.DeviceType,
 			Nodes: v1alpha1.EdgeNodes{},
 		},
 		Status: v1alpha1.EdgeDeviceStatusDown,

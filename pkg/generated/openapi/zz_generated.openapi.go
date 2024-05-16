@@ -177,6 +177,18 @@ func schema_pkg_apis_edge_v1alpha1_EdgeDeviceSpec(ref common.ReferenceCallback) 
 			SchemaProps: spec.SchemaProps{
 				Type: []string{"object"},
 				Properties: map[string]spec.Schema{
+					"id": {
+						SchemaProps: spec.SchemaProps{
+							Type:   []string{"string"},
+							Format: "",
+						},
+					},
+					"type": {
+						SchemaProps: spec.SchemaProps{
+							Type:   []string{"string"},
+							Format: "",
+						},
+					},
 					"nodes": {
 						SchemaProps: spec.SchemaProps{
 							Type: []string{"array"},

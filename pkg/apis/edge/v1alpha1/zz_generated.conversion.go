@@ -126,6 +126,8 @@ func Convert_edge_EdgeDeviceList_To_v1alpha1_EdgeDeviceList(in *edge.EdgeDeviceL
 }
 
 func autoConvert_v1alpha1_EdgeDeviceSpec_To_edge_EdgeDeviceSpec(in *EdgeDeviceSpec, out *edge.EdgeDeviceSpec, s conversion.Scope) error {
+	out.ID = in.ID
+	out.Type = in.Type
 	out.Nodes = *(*edge.EdgeNodes)(unsafe.Pointer(&in.Nodes))
 	return nil
 }
@@ -136,6 +138,8 @@ func Convert_v1alpha1_EdgeDeviceSpec_To_edge_EdgeDeviceSpec(in *EdgeDeviceSpec, 
 }
 
 func autoConvert_edge_EdgeDeviceSpec_To_v1alpha1_EdgeDeviceSpec(in *edge.EdgeDeviceSpec, out *EdgeDeviceSpec, s conversion.Scope) error {
+	out.ID = in.ID
+	out.Type = in.Type
 	out.Nodes = *(*EdgeNodes)(unsafe.Pointer(&in.Nodes))
 	return nil
 }

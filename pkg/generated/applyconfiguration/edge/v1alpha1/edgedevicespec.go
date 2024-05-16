@@ -11,6 +11,8 @@ import (
 // EdgeDeviceSpecApplyConfiguration represents an declarative configuration of the EdgeDeviceSpec type for use
 // with apply.
 type EdgeDeviceSpecApplyConfiguration struct {
+	ID    *string             `json:"id,omitempty"`
+	Type  *string             `json:"type,omitempty"`
 	Nodes *v1alpha1.EdgeNodes `json:"nodes,omitempty"`
 }
 
@@ -18,6 +20,22 @@ type EdgeDeviceSpecApplyConfiguration struct {
 // apply.
 func EdgeDeviceSpec() *EdgeDeviceSpecApplyConfiguration {
 	return &EdgeDeviceSpecApplyConfiguration{}
+}
+
+// WithID sets the ID field in the declarative configuration to the given value
+// and returns the receiver, so that objects can be built by chaining "With" function invocations.
+// If called multiple times, the ID field is set to the value of the last call.
+func (b *EdgeDeviceSpecApplyConfiguration) WithID(value string) *EdgeDeviceSpecApplyConfiguration {
+	b.ID = &value
+	return b
+}
+
+// WithType sets the Type field in the declarative configuration to the given value
+// and returns the receiver, so that objects can be built by chaining "With" function invocations.
+// If called multiple times, the Type field is set to the value of the last call.
+func (b *EdgeDeviceSpecApplyConfiguration) WithType(value string) *EdgeDeviceSpecApplyConfiguration {
+	b.Type = &value
+	return b
 }
 
 // WithNodes sets the Nodes field in the declarative configuration to the given value
